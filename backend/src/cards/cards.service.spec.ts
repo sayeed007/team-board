@@ -97,9 +97,9 @@ describe('CardsService', () => {
       });
 
       const result = await service.create(
+        'board-1',
         createCardDto,
         mockUser.id,
-        mockUser.organizationId,
       );
 
       expect(result.title).toBe(createCardDto.title);
@@ -127,7 +127,7 @@ describe('CardsService', () => {
       mockPrismaService.list.findUnique.mockResolvedValue(differentOrgList);
 
       await expect(
-        service.create(createCardDto, mockUser.id, mockUser.organizationId),
+        service.create('board-1', createCardDto, mockUser.id),
       ).rejects.toThrow(ForbiddenException);
     });
   });
@@ -137,11 +137,11 @@ describe('CardsService', () => {
       const cards = [mockCard, { ...mockCard, id: 'card-2' }];
       mockPrismaService.card.findMany.mockResolvedValue(cards);
 
-      const result = await service.findAll('list-1');
+      const result = await service.findAll('board-1');
 
       expect(result).toHaveLength(2);
       expect(mockPrismaService.card.findMany).toHaveBeenCalledWith({
-        where: { listId: 'list-1', isDeleted: false },
+        where: { boardId: 'board-1', deletedAt: null },
         include: expect.any(Object),
         orderBy: { position: 'asc' },
       });
@@ -186,7 +186,6 @@ describe('CardsService', () => {
         'card-1',
         updateCardDto,
         mockUser.id,
-        mockUser.organizationId,
       );
 
       expect(result.title).toBe(updateCardDto.title);
@@ -224,7 +223,6 @@ describe('CardsService', () => {
         'card-1',
         moveCardDto,
         mockUser.id,
-        mockUser.organizationId,
       );
 
       expect(result.listId).toBe(moveCardDto.listId);
@@ -260,7 +258,6 @@ describe('CardsService', () => {
         'card-1',
         moveCardDto,
         mockUser.id,
-        mockUser.organizationId,
       );
 
       // Should NOT create activity log for position change within same list
@@ -289,7 +286,7 @@ describe('CardsService', () => {
       mockPrismaService.list.findUnique.mockResolvedValue(differentOrgList);
 
       await expect(
-        service.move('card-1', moveCardDto, mockUser.id, mockUser.organizationId),
+        service.move('card-1', moveCardDto, mockUser.id),
       ).rejects.toThrow(ForbiddenException);
     });
   });
@@ -305,11 +302,11 @@ describe('CardsService', () => {
         isDeleted: true,
       });
 
-      await service.remove('card-1', mockUser.organizationId);
+      await service.remove('card-1', mockUser.id);
 
       expect(mockPrismaService.card.update).toHaveBeenCalledWith({
         where: { id: 'card-1' },
-        data: { isDeleted: true },
+        data: { deletedAt: expect.any(Date) },
       });
     });
 
@@ -325,7 +322,7 @@ describe('CardsService', () => {
       });
 
       await expect(
-        service.remove('card-1', mockUser.organizationId),
+        service.remove('card-1', mockUser.id),
       ).rejects.toThrow(ForbiddenException);
     });
   });

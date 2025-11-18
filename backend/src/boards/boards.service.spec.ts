@@ -14,6 +14,7 @@ describe('BoardsService', () => {
       create: jest.fn(),
       findMany: jest.fn(),
       findUnique: jest.fn(),
+      findFirst: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
     },
@@ -64,7 +65,6 @@ describe('BoardsService', () => {
         name: 'New Board',
         description: 'New Description',
         teamId: 'team-1',
-        isPrivate: false,
       };
 
       mockPrismaService.board.create.mockResolvedValue({
@@ -75,6 +75,7 @@ describe('BoardsService', () => {
       const result = await service.create(
         createBoardDto,
         mockUser.organizationId,
+        mockUser.id,
       );
 
       expect(result.name).toBe(createBoardDto.name);
@@ -93,7 +94,7 @@ describe('BoardsService', () => {
       const boards = [mockBoard, { ...mockBoard, id: 'board-2' }];
       mockPrismaService.board.findMany.mockResolvedValue(boards);
 
-      const result = await service.findAll(mockUser.organizationId);
+      const result = await service.findAll(mockUser.organizationId, mockUser.id);
 
       expect(result).toHaveLength(2);
       expect(mockPrismaService.board.findMany).toHaveBeenCalledWith({
@@ -124,12 +125,12 @@ describe('BoardsService', () => {
 
   describe('findOne', () => {
     it('should return a board by id', async () => {
-      mockPrismaService.board.findUnique.mockResolvedValue(mockBoard);
+      mockPrismaService.board.findFirst.mockResolvedValue(mockBoard);
 
-      const result = await service.findOne('board-1');
+      const result = await service.findOne('board-1', mockUser.organizationId);
 
       expect(result).toEqual(mockBoard);
-      expect(mockPrismaService.board.findUnique).toHaveBeenCalledWith({
+      expect(mockPrismaService.board.findFirst).toHaveBeenCalledWith({
         where: { id: 'board-1', isDeleted: false },
         include: {
           lists: {
@@ -158,9 +159,9 @@ describe('BoardsService', () => {
     });
 
     it('should throw NotFoundException if board does not exist', async () => {
-      mockPrismaService.board.findUnique.mockResolvedValue(null);
+      mockPrismaService.board.findFirst.mockResolvedValue(null);
 
-      await expect(service.findOne('nonexistent')).rejects.toThrow(
+      await expect(service.findOne('nonexistent', mockUser.organizationId)).rejects.toThrow(
         NotFoundException,
       );
     });

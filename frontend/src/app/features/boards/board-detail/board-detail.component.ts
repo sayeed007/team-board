@@ -226,7 +226,11 @@ export class BoardDetailComponent implements OnInit {
     }
   }
 
-  drop(event: CdkDragDrop<Card[]>) {
+  drop(event: CdkDragDrop<Card[] | undefined>) {
+    if (!event.container.data || !event.previousContainer.data) {
+      return;
+    }
+
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {

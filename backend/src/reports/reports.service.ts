@@ -103,6 +103,10 @@ export class ReportsService {
       },
     });
 
+    if (!team) {
+      throw new Error('Team not found');
+    }
+
     const summaries = await Promise.all(
       team.teamMembers.map(async (member) => {
         const summary = await this.getEmployeeDailySummary(member.userId, organizationId, date);
@@ -156,6 +160,14 @@ export class ReportsService {
 
     const usersData = await Promise.all(
       completedCards.map(async (item) => {
+        if (!item.assigneeId) {
+          return {
+            user: null,
+            completedCards: item._count.id,
+            totalHours: item._sum.estimateHours || 0,
+          };
+        }
+
         const user = await this.prisma.user.findUnique({
           where: { id: item.assigneeId },
           select: { id: true, name: true, email: true },
