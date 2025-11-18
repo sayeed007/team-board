@@ -45,10 +45,10 @@
 - **Reactive Programming**: RxJS
 
 **Infrastructure**
-- **Monorepo**: Nx 18+
 - **Containerization**: Docker + Docker Compose
-- **CI/CD**: GitHub Actions
+- **CI/CD**: GitHub Actions (automated testing, building, deployment)
 - **Deployment**: Cloud-ready (AWS/Azure/GCP/Render)
+- **Testing**: Jest, Jasmine, Karma, Supertest
 
 ### Architecture Overview
 
@@ -71,9 +71,9 @@
 
 For detailed architecture diagrams, see:
 - [Architecture Plan](docs/Architecture_Plan.md)
-- [Nx Monorepo Structure](docs/Nx_Monorepo_Structure.md)
 - [Database Schema](docs/Database_Schema.md)
 - [Data Flow Diagrams](docs/Data_Flow_Diagrams.md)
+- [Implementation Roadmap](docs/Implementation_Roadmap.md)
 
 ---
 
@@ -81,52 +81,62 @@ For detailed architecture diagrams, see:
 
 ```
 team-board/
-├── apps/
-│   ├── api/                    # NestJS backend application
-│   │   ├── src/
-│   │   │   ├── app/
-│   │   │   │   ├── auth/       # Authentication module
-│   │   │   │   ├── users/      # User management
-│   │   │   │   ├── boards/     # Board CRUD
-│   │   │   │   ├── cards/      # Card/task management
-│   │   │   │   ├── daily-status/  # Daily check-ins
-│   │   │   │   ├── reports/    # Reports & analytics
-│   │   │   │   └── integrations/  # SOAP integration
-│   │   │   └── main.ts
-│   │   └── prisma/
-│   │       ├── schema.prisma   # Database schema
-│   │       └── migrations/     # DB migrations
-│   │
-│   └── web/                    # Angular frontend application
-│       ├── src/
-│       │   ├── app/
-│       │   │   ├── core/       # Core services, guards, interceptors
-│       │   │   ├── layout/     # Header, sidebar, footer
-│       │   │   └── features/   # Feature modules
-│       │   │       ├── auth/
-│       │   │       ├── dashboard/
-│       │   │       ├── boards/
-│       │   │       ├── daily-view/
-│       │   │       ├── reports/
-│       │   │       └── admin/
-│       │   └── main.ts
-│       └── project.json
+├── backend/                    # NestJS backend application
+│   ├── src/
+│   │   ├── auth/               # Authentication module
+│   │   ├── users/              # User management
+│   │   ├── organizations/      # Organization management
+│   │   ├── teams/              # Team management
+│   │   ├── boards/             # Board CRUD
+│   │   ├── lists/              # List management
+│   │   ├── cards/              # Card/task management
+│   │   ├── comments/           # Card comments
+│   │   ├── daily-status/       # Daily check-ins
+│   │   ├── reports/            # Reports & analytics
+│   │   ├── notifications/      # Notification system
+│   │   ├── integrations/       # SOAP integration
+│   │   ├── activity-log/       # Activity tracking
+│   │   ├── prisma/             # Prisma service
+│   │   └── main.ts
+│   ├── prisma/
+│   │   ├── schema.prisma       # Database schema
+│   │   └── migrations/         # DB migrations
+│   ├── test/                   # E2E tests
+│   ├── Dockerfile
+│   └── package.json
 │
-├── libs/
-│   ├── shared/
-│   │   ├── types/              # Shared TypeScript types/DTOs
-│   │   ├── ui/                 # Reusable Angular components
-│   │   └── utils/              # Utility functions
-│   ├── backend/
-│   │   └── database/           # Prisma service
-│   └── frontend/
-│       ├── state/              # NgRx state slices
-│       └── data-access/        # API service layer
+├── frontend/                   # Angular frontend application
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── core/           # Core services, guards, interceptors
+│   │   │   ├── shared/         # Shared models and utilities
+│   │   │   └── features/       # Feature modules
+│   │   │       ├── auth/       # Login, auth store (NgRx)
+│   │   │       ├── dashboard/  # Dashboard with stats
+│   │   │       ├── boards/     # Board list & Kanban view
+│   │   │       ├── daily-view/ # Daily tracking
+│   │   │       ├── reports/    # Reports
+│   │   │       └── admin/      # Admin panel
+│   │   └── main.ts
+│   ├── Dockerfile
+│   ├── nginx.conf              # Nginx configuration
+│   ├── karma.conf.js           # Test configuration
+│   └── package.json
+│
+├── .github/
+│   └── workflows/              # CI/CD pipelines
+│       ├── ci-cd.yml           # Main CI/CD workflow
+│       └── codeql.yml          # Security scanning
 │
 ├── docs/                       # Documentation
-├── docker-compose.yml
-├── .env.example
-├── nx.json
+│   ├── TeamBoard Functional Requirements.md
+│   ├── Architecture_Plan.md
+│   ├── Database_Schema.md
+│   ├── Data_Flow_Diagrams.md
+│   └── Implementation_Roadmap.md
+│
+├── docker-compose.yml          # Docker orchestration
+├── .env.example                # Environment variables template
 └── README.md
 ```
 
@@ -143,52 +153,81 @@ team-board/
 
 ### Installation
 
+#### Option 1: Docker (Recommended)
+
 1. **Clone the repository**
    ```bash
    git clone https://github.com/sayeed007/team-board.git
    cd team-board
    ```
 
-2. **Install dependencies**
+2. **Set up environment variables**
    ```bash
+   cp .env.example .env
+   # Edit .env with your configuration (optional - has defaults)
+   ```
+
+3. **Start all services with Docker Compose**
+   ```bash
+   docker-compose up -d
+   ```
+
+4. **Access the application**
+   - **Frontend**: http://localhost:8080
+   - **Backend API**: http://localhost:3000
+   - **Swagger Docs**: http://localhost:3000/api
+   - **PostgreSQL**: localhost:5432
+
+#### Option 2: Local Development
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/sayeed007/team-board.git
+   cd team-board
+   ```
+
+2. **Install backend dependencies**
+   ```bash
+   cd backend
    npm install
    ```
 
-3. **Set up environment variables**
+3. **Install frontend dependencies**
    ```bash
+   cd ../frontend
+   npm install
+   ```
+
+4. **Set up environment variables**
+   ```bash
+   cd ..
    cp .env.example .env
    # Edit .env with your configuration
    ```
 
-4. **Start PostgreSQL with Docker**
+5. **Start PostgreSQL with Docker**
    ```bash
    docker-compose up -d postgres
    ```
 
-5. **Run database migrations**
+6. **Run database migrations**
    ```bash
+   cd backend
    npx prisma migrate dev
-   ```
-
-6. **Seed the database (optional)**
-   ```bash
-   npx prisma db seed
    ```
 
 7. **Start the development servers**
 
-   **Option 1: Run both apps in separate terminals**
+   **Terminal 1: Backend**
    ```bash
-   # Terminal 1: Backend
-   nx serve api
-
-   # Terminal 2: Frontend
-   nx serve web
+   cd backend
+   npm run start:dev
    ```
 
-   **Option 2: Run concurrently (requires nx-parallel plugin)**
+   **Terminal 2: Frontend**
    ```bash
-   nx run-many --target=serve --projects=api,web
+   cd frontend
+   npm start
    ```
 
 8. **Access the application**
@@ -200,55 +239,73 @@ team-board/
 
 ## 🧪 Testing
 
-### Run all tests
+### Backend Tests
 ```bash
-# Unit tests
-nx run-many --target=test --all
+cd backend
 
-# E2E tests
-nx e2e web-e2e
+# Run all unit tests
+npm test
 
-# Test coverage
-nx run-many --target=test --all --coverage
+# Run tests in watch mode
+npm run test:watch
+
+# Run E2E tests
+npm run test:e2e
+
+# Generate coverage report
+npm run test:cov
 ```
 
-### Run specific tests
+### Frontend Tests
+```bash
+cd frontend
+
+# Run all unit tests
+npm test
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run tests in headless mode
+npm test -- --watch=false --browsers=ChromeHeadless
+```
+
+### Run Tests in Docker
 ```bash
 # Backend tests
-nx test api
+docker-compose run backend npm test
 
 # Frontend tests
-nx test web
-
-# Specific module
-nx test api --testPathPattern=auth
+docker-compose run frontend npm test -- --watch=false --browsers=ChromeHeadless
 ```
 
 ---
 
 ## 🏗️ Building for Production
 
-### Build all applications
+### Build Backend
 ```bash
-nx run-many --target=build --all --configuration=production
+cd backend
+npm run build
 ```
 
-### Build specific application
+### Build Frontend
 ```bash
-# Backend
-nx build api --configuration=production
-
-# Frontend
-nx build web --configuration=production
+cd frontend
+npm run build:prod
 ```
 
-### Docker build
+### Docker Build
 ```bash
-# Build backend image
-docker build -f apps/api/Dockerfile -t teamboard-api .
+# Build all services
+docker-compose build
 
-# Build frontend image
-docker build -f apps/web/Dockerfile -t teamboard-web .
+# Build specific service
+docker-compose build backend
+docker-compose build frontend
+
+# Build and start
+docker-compose up --build -d
 ```
 
 ---
@@ -257,39 +314,61 @@ docker build -f apps/web/Dockerfile -t teamboard-web .
 
 ### Code Generation
 
+**Backend (NestJS)**
 ```bash
-# Generate NestJS module
-nx g @nx/nest:module my-module --project=api
+cd backend
 
-# Generate Angular component
-nx g @angular/core:component my-component --project=web
+# Generate module
+nest g module my-module
 
-# Generate shared library
-nx g @nx/js:library my-lib --directory=libs/shared
+# Generate controller
+nest g controller my-controller
+
+# Generate service
+nest g service my-service
+```
+
+**Frontend (Angular)**
+```bash
+cd frontend
+
+# Generate component
+ng g component features/my-feature
+
+# Generate service
+ng g service core/services/my-service
+
+# Generate guard
+ng g guard core/guards/my-guard
 ```
 
 ### Linting
 
+**Backend**
 ```bash
-# Lint all projects
-nx run-many --target=lint --all
+cd backend
+npm run lint
+npm run lint -- --fix
+```
 
-# Lint specific project
-nx lint api
-nx lint web
-
-# Auto-fix linting issues
-nx lint api --fix
+**Frontend**
+```bash
+cd frontend
+npm run lint
 ```
 
 ### Formatting
 
+**Backend**
 ```bash
-# Format all files
+cd backend
 npm run format
+```
 
-# Check formatting
-npm run format:check
+**Frontend**
+```bash
+cd frontend
+npm run format
 ```
 
 ---
@@ -298,9 +377,9 @@ npm run format:check
 
 - **[Functional Requirements](docs/TeamBoard%20Functional%20Requirements.md)** - Complete feature specifications
 - **[Architecture Plan](docs/Architecture_Plan.md)** - System design and cloud architecture
-- **[Nx Monorepo Structure](docs/Nx_Monorepo_Structure.md)** - Project organization
 - **[Database Schema](docs/Database_Schema.md)** - PostgreSQL schema and migrations
 - **[Data Flow Diagrams](docs/Data_Flow_Diagrams.md)** - Request/response flows
+- **[Implementation Roadmap](docs/Implementation_Roadmap.md)** - Development phases and progress
 - **[API Documentation](http://localhost:3000/api)** - Swagger UI (when running locally)
 
 ---
