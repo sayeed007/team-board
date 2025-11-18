@@ -7,68 +7,72 @@ services:
     container_name: teamboard-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: teamboard_user
-      POSTGRES_PASSWORD: teamboard_pass
-      POSTGRES_DB: teamboard_dev
+      POSTGRES_USER: ${POSTGRES_USER:-teamboard_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-teamboard_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-teamboard_dev}
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
-      - '5432:5432'
+      - '${POSTGRES_PORT:-5432}:5432'
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U teamboard_user -d teamboard_dev']
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-teamboard_user}']
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
       - teamboard-network
 
-  # Backend API (NestJS) - Uncomment for full Docker setup
-  # api:
-  #   build:
-  #     context: .
-  #     dockerfile: apps/api/Dockerfile
-  #   container_name: teamboard-api
-  #   restart: unless-stopped
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #   environment:
-  #     NODE_ENV: development
-  #     PORT: 3000
-  #     DATABASE_URL: postgresql://teamboard_user:teamboard_pass@postgres:5432/teamboard_dev
-  #     JWT_SECRET: ${JWT_SECRET}
-  #     CORS_ORIGIN: http://localhost:4200
-  #   ports:
-  #     - '3000:3000'
-  #   volumes:
-  #     - ./apps/api:/app/apps/api
-  #     - ./libs:/app/libs
-  #     - /app/node_modules
-  #   networks:
-  #     - teamboard-network
-  #   command: npm run start:dev api
+  # Backend API (NestJS)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: teamboard-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 3000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-teamboard_user}:${POSTGRES_PASSWORD:-teamboard_pass}@postgres:5432/${POSTGRES_DB:-teamboard_dev}?schema=public
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+    ports:
+      - '${BACKEND_PORT:-3000}:3000'
+    networks:
+      - teamboard-network
+    volumes:
+      - ./backend/prisma:/app/prisma
+    command: sh -c "npx prisma migrate deploy && node dist/main"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:3000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
-  # Frontend Web (Angular) - Uncomment for full Docker setup
-  # web:
-  #   build:
-  #     context: .
-  #     dockerfile: apps/web/Dockerfile
-  #   container_name: teamboard-web
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - api
-  #   environment:
-  #     VITE_API_URL: http://localhost:3000
-  #   ports:
-  #     - '4200:4200'
-  #   volumes:
-  #     - ./apps/web:/app/apps/web
-  #     - ./libs:/app/libs
-  #     - /app/node_modules
-  #   networks:
-  #     - teamboard-network
-  #   command: npm run start:dev web
+  # Frontend (Angular + Nginx)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: teamboard-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      API_URL: ${API_URL:-http://localhost:3000}
+    ports:
+      - '${FRONTEND_PORT:-8080}:8080'
+    networks:
+      - teamboard-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:8080 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   # pgAdmin (Optional - Database Management UI)
   # Uncomment to use pgAdmin for database management
