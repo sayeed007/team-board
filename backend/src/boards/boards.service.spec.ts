@@ -45,10 +45,7 @@ describe('BoardsService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        BoardsService,
-        { provide: PrismaService, useValue: mockPrismaService },
-      ],
+      providers: [BoardsService, { provide: PrismaService, useValue: mockPrismaService }],
     }).compile();
 
     service = module.get<BoardsService>(BoardsService);
@@ -72,11 +69,7 @@ describe('BoardsService', () => {
         ...createBoardDto,
       });
 
-      const result = await service.create(
-        createBoardDto,
-        mockUser.organizationId,
-        mockUser.id,
-      );
+      const result = await service.create(createBoardDto, mockUser.organizationId, mockUser.id);
 
       expect(result.name).toBe(createBoardDto.name);
       expect(mockPrismaService.board.create).toHaveBeenCalledWith({
@@ -180,11 +173,7 @@ describe('BoardsService', () => {
         ...updateBoardDto,
       });
 
-      const result = await service.update(
-        'board-1',
-        updateBoardDto,
-        mockUser.organizationId,
-      );
+      const result = await service.update('board-1', updateBoardDto, mockUser.organizationId);
 
       expect(result.name).toBe(updateBoardDto.name);
       expect(mockPrismaService.board.update).toHaveBeenCalledWith({
@@ -226,9 +215,9 @@ describe('BoardsService', () => {
       const differentOrgBoard = { ...mockBoard, organizationId: 'org-2' };
       mockPrismaService.board.findUnique.mockResolvedValue(differentOrgBoard);
 
-      await expect(
-        service.remove('board-1', mockUser.organizationId),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.remove('board-1', mockUser.organizationId)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
   });
 });

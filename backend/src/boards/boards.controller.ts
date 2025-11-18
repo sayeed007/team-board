@@ -23,7 +23,10 @@ export class BoardsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all boards' })
-  findAll(@CurrentUser('organizationId') organizationId: string, @CurrentUser('id') userId: string) {
+  findAll(
+    @CurrentUser('organizationId') organizationId: string,
+    @CurrentUser('id') userId: string,
+  ) {
     return this.boardsService.findAll(organizationId, userId);
   }
 

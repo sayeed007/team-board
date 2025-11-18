@@ -66,10 +66,7 @@ describe('CardsService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        CardsService,
-        { provide: PrismaService, useValue: mockPrismaService },
-      ],
+      providers: [CardsService, { provide: PrismaService, useValue: mockPrismaService }],
     }).compile();
 
     service = module.get<CardsService>(CardsService);
@@ -96,11 +93,7 @@ describe('CardsService', () => {
         ...createCardDto,
       });
 
-      const result = await service.create(
-        'board-1',
-        createCardDto,
-        mockUser.id,
-      );
+      const result = await service.create('board-1', createCardDto, mockUser.id);
 
       expect(result.title).toBe(createCardDto.title);
       expect(mockPrismaService.card.create).toHaveBeenCalledWith({
@@ -126,9 +119,9 @@ describe('CardsService', () => {
 
       mockPrismaService.list.findUnique.mockResolvedValue(differentOrgList);
 
-      await expect(
-        service.create('board-1', createCardDto, mockUser.id),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.create('board-1', createCardDto, mockUser.id)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
   });
 
@@ -160,9 +153,7 @@ describe('CardsService', () => {
     it('should throw NotFoundException if card does not exist', async () => {
       mockPrismaService.card.findUnique.mockResolvedValue(null);
 
-      await expect(service.findOne('nonexistent')).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.findOne('nonexistent')).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -182,11 +173,7 @@ describe('CardsService', () => {
         ...updateCardDto,
       });
 
-      const result = await service.update(
-        'card-1',
-        updateCardDto,
-        mockUser.id,
-      );
+      const result = await service.update('card-1', updateCardDto, mockUser.id);
 
       expect(result.title).toBe(updateCardDto.title);
     });
@@ -219,11 +206,7 @@ describe('CardsService', () => {
         position: moveCardDto.position,
       });
 
-      const result = await service.move(
-        'card-1',
-        moveCardDto,
-        mockUser.id,
-      );
+      const result = await service.move('card-1', moveCardDto, mockUser.id);
 
       expect(result.listId).toBe(moveCardDto.listId);
       expect(result.position).toBe(moveCardDto.position);
@@ -254,11 +237,7 @@ describe('CardsService', () => {
         position: moveCardDto.position,
       });
 
-      await service.move(
-        'card-1',
-        moveCardDto,
-        mockUser.id,
-      );
+      await service.move('card-1', moveCardDto, mockUser.id);
 
       // Should NOT create activity log for position change within same list
       expect(mockPrismaService.activityLog.create).not.toHaveBeenCalled();
@@ -285,9 +264,9 @@ describe('CardsService', () => {
       });
       mockPrismaService.list.findUnique.mockResolvedValue(differentOrgList);
 
-      await expect(
-        service.move('card-1', moveCardDto, mockUser.id),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.move('card-1', moveCardDto, mockUser.id)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
   });
 
@@ -321,9 +300,7 @@ describe('CardsService', () => {
         list: differentOrgList,
       });
 
-      await expect(
-        service.remove('card-1', mockUser.id),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.remove('card-1', mockUser.id)).rejects.toThrow(ForbiddenException);
     });
   });
 });

@@ -29,7 +29,10 @@ export class IntegrationsController {
   @Roles(UserRole.ORG_ADMIN, UserRole.SYS_ADMIN)
   @ApiQuery({ name: 'date', required: false, example: '2025-01-18' })
   @ApiOperation({ summary: 'Get export logs' })
-  getExportLogs(@CurrentUser('organizationId') organizationId: string, @Query('date') date?: string) {
+  getExportLogs(
+    @CurrentUser('organizationId') organizationId: string,
+    @Query('date') date?: string,
+  ) {
     return this.integrationsService.getExportLogs(organizationId, date);
   }
 }

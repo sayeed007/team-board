@@ -53,7 +53,11 @@ export class CardsDetailController {
 
   @Patch(':id/move')
   @ApiOperation({ summary: 'Move card to another list' })
-  move(@Param('id') id: string, @Body() moveCardDto: MoveCardDto, @CurrentUser('id') userId: string) {
+  move(
+    @Param('id') id: string,
+    @Body() moveCardDto: MoveCardDto,
+    @CurrentUser('id') userId: string,
+  ) {
     return this.cardsService.move(id, moveCardDto, userId);
   }
 
