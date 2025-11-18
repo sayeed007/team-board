@@ -166,7 +166,7 @@ export class RegisterComponent {
 
   constructor(
     private fb: FormBuilder,
-    private store: Store,
+    private store: Store
   ) {
     this.registerForm = this.fb.group(
       {
@@ -176,7 +176,7 @@ export class RegisterComponent {
         password: ['', [Validators.required, Validators.minLength(6)]],
         confirmPassword: ['', [Validators.required]],
       },
-      { validators: this.passwordMatchValidator },
+      { validators: this.passwordMatchValidator }
     );
   }
 

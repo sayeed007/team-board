@@ -5,7 +5,7 @@ export const login = createAction('[Auth] Login', props<{ credentials: LoginRequ
 
 export const loginSuccess = createAction(
   '[Auth] Login Success',
-  props<{ response: LoginResponse }>(),
+  props<{ response: LoginResponse }>()
 );
 
 export const loginFailure = createAction('[Auth] Login Failure', props<{ error: string }>());
@@ -14,7 +14,7 @@ export const register = createAction('[Auth] Register', props<{ data: RegisterRe
 
 export const registerSuccess = createAction(
   '[Auth] Register Success',
-  props<{ response: LoginResponse }>(),
+  props<{ response: LoginResponse }>()
 );
 
 export const registerFailure = createAction('[Auth] Register Failure', props<{ error: string }>());

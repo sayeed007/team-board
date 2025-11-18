@@ -75,16 +75,18 @@ import { selectUser } from '../auth/store/auth.selectors';
             </div>
 
             <div *ngIf="!loading && (boards$ | async) as boards" class="boards-list">
-              <div *ngFor="let board of boards" class="board-item" [routerLink]="['/boards', board.id]">
+              <div
+                *ngFor="let board of boards"
+                class="board-item"
+                [routerLink]="['/boards', board.id]"
+              >
                 <h3>{{ board.name }}</h3>
                 <p>{{ board.description }}</p>
               </div>
 
               <div *ngIf="boards.length === 0" class="empty-state">
                 <p>No boards yet. Create your first board to get started!</p>
-                <button mat-raised-button color="primary" routerLink="/boards">
-                  Create Board
-                </button>
+                <button mat-raised-button color="primary" routerLink="/boards">Create Board</button>
               </div>
             </div>
           </mat-card-content>
@@ -178,7 +180,7 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private store: Store,
-    private apiService: ApiService,
+    private apiService: ApiService
   ) {}
 
   ngOnInit() {

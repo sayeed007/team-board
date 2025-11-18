@@ -155,13 +155,13 @@ export class ApiService {
 
   getTeamDailySummary(
     teamId: string,
-    date?: string,
+    date?: string
   ): Observable<{ team: Team; date: Date; members: DailySummary[] }> {
     let params = new HttpParams();
     if (date) params = params.set('date', date);
     return this.http.get<{ team: Team; date: Date; members: DailySummary[] }>(
       `${this.apiUrl}/reports/team/${teamId}/daily-summary`,
-      { params },
+      { params }
     );
   }
 

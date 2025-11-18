@@ -39,10 +39,7 @@ describe('BoardListComponent', () => {
   ];
 
   beforeEach(async () => {
-    const apiServiceSpy = jasmine.createSpyObj('ApiService', [
-      'getBoards',
-      'deleteBoard',
-    ]);
+    const apiServiceSpy = jasmine.createSpyObj('ApiService', ['getBoards', 'deleteBoard']);
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({

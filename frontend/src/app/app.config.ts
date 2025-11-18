@@ -8,14 +8,18 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
+import { authReducer } from './features/auth/store/auth.reducer';
+import { AuthEffects } from './features/auth/store/auth.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
     provideAnimations(),
-    provideStore(),
-    provideEffects(),
+    provideStore({
+      auth: authReducer,
+    }),
+    provideEffects([AuthEffects]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: false,

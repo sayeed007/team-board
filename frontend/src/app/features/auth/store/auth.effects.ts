@@ -15,10 +15,10 @@ export class AuthEffects {
       switchMap(({ credentials }) =>
         this.apiService.login(credentials).pipe(
           map((response) => AuthActions.loginSuccess({ response })),
-          catchError((error) => of(AuthActions.loginFailure({ error: error.message }))),
-        ),
-      ),
-    ),
+          catchError((error) => of(AuthActions.loginFailure({ error: error.message })))
+        )
+      )
+    )
   );
 
   register$ = createEffect(() =>
@@ -27,10 +27,10 @@ export class AuthEffects {
       switchMap(({ data }) =>
         this.apiService.register(data).pipe(
           map((response) => AuthActions.registerSuccess({ response })),
-          catchError((error) => of(AuthActions.registerFailure({ error: error.message }))),
-        ),
-      ),
-    ),
+          catchError((error) => of(AuthActions.registerFailure({ error: error.message })))
+        )
+      )
+    )
   );
 
   loginSuccess$ = createEffect(
@@ -40,9 +40,9 @@ export class AuthEffects {
         tap(({ response }) => {
           this.authService.setToken(response.access_token);
           this.router.navigate(['/dashboard']);
-        }),
+        })
       ),
-    { dispatch: false },
+    { dispatch: false }
   );
 
   loadUser$ = createEffect(() =>
@@ -51,10 +51,10 @@ export class AuthEffects {
       switchMap(() =>
         this.apiService.getMe().pipe(
           map((user) => AuthActions.loadUserSuccess({ user })),
-          catchError((error) => of(AuthActions.loadUserFailure({ error: error.message }))),
-        ),
-      ),
-    ),
+          catchError((error) => of(AuthActions.loadUserFailure({ error: error.message })))
+        )
+      )
+    )
   );
 
   logout$ = createEffect(
@@ -64,15 +64,15 @@ export class AuthEffects {
         tap(() => {
           this.authService.removeToken();
           this.router.navigate(['/auth/login']);
-        }),
+        })
       ),
-    { dispatch: false },
+    { dispatch: false }
   );
 
   constructor(
     private actions$: Actions,
     private apiService: ApiService,
     private authService: AuthService,
-    private router: Router,
+    private router: Router
   ) {}
 }

@@ -101,7 +101,7 @@ export class BoardListComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private router: Router,
-    private dialog: MatDialog,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {

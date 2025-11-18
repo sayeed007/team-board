@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker:*)",
+      "Bash(node --version)",
+      "Bash(npm --version:*)",
+      "Bash(if [ -f .env ])",
+      "Bash(then echo \"exists\")",
+      "Bash(else echo \"not found\")",
+      "Bash(fi)",
+      "Bash(cp:*)",
+      "Bash(npm install:*)",
+      "Bash(docker-compose:*)",
+      "Bash(rm:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfix: Resolve TypeScript compilation errors and Docker build issues\n\n- Update Dockerfiles to use npm install instead of npm ci to handle package-lock.json sync issues\n- Fix TypeScript errors in auth service (remove conflicting include/select)\n- Fix TypeScript errors in prisma service (add type guards for Reflect.ownKeys)\n- Fix TypeScript errors in reports service (add null checks for team and assigneeId)\n- Fix test files to match updated service method signatures\n- Fix Angular CDK drag-drop type compatibility in board detail component\n- Regenerate package-lock.json files for both frontend and backend\n\nThese changes ensure the project builds successfully in Docker and all TypeScript compilation errors are resolved.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push)",
+      "Bash(git commit:*)",
+      "Bash(test:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx ts-node:*)",
+      "Bash(npx dotenv:*)",
+      "Bash(npx prisma:*)",
+      "Bash(git checkout:*)",
+      "Bash(npm run start:dev:*)",
+      "Bash(npm start)",
+      "Bash(git config:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -4,7 +4,12 @@ import { ActivatedRoute } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import {
+  CdkDragDrop,
+  DragDropModule,
+  moveItemInArray,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
 import { ApiService } from '@core/services/api.service';
 import { Board, List, Card } from '@shared/models';
 
@@ -190,7 +195,7 @@ export class BoardDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private apiService: ApiService,
+    private apiService: ApiService
   ) {}
 
   ngOnInit() {
@@ -218,11 +223,9 @@ export class BoardDetailComponent implements OnInit {
   addCard(list: List) {
     const title = prompt('Card title:');
     if (title && this.board) {
-      this.apiService
-        .createCard(this.board.id, { title, listId: list.id })
-        .subscribe(() => {
-          this.loadBoard(this.board!.id);
-        });
+      this.apiService.createCard(this.board.id, { title, listId: list.id }).subscribe(() => {
+        this.loadBoard(this.board!.id);
+      });
     }
   }
 
@@ -238,7 +241,7 @@ export class BoardDetailComponent implements OnInit {
         event.previousContainer.data,
         event.container.data,
         event.previousIndex,
-        event.currentIndex,
+        event.currentIndex
       );
 
       const card = event.container.data[event.currentIndex];
