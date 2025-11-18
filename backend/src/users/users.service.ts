@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -93,7 +98,12 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto, organizationId: string, requestingUserId: string) {
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    organizationId: string,
+    requestingUserId: string,
+  ) {
     const user = await this.findOne(id, organizationId);
 
     // Prevent users from changing their own role (unless they're SYS_ADMIN)

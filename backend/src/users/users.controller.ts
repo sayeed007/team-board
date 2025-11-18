@@ -20,7 +20,10 @@ export class UsersController {
   @Roles(UserRole.ORG_ADMIN, UserRole.SYS_ADMIN)
   @ApiOperation({ summary: 'Create a new user' })
   @ApiResponse({ status: 201, description: 'User created successfully' })
-  create(@Body() createUserDto: CreateUserDto, @CurrentUser('organizationId') organizationId: string) {
+  create(
+    @Body() createUserDto: CreateUserDto,
+    @CurrentUser('organizationId') organizationId: string,
+  ) {
     return this.usersService.create(createUserDto, organizationId);
   }
 

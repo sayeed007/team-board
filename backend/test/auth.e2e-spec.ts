@@ -54,14 +54,12 @@ describe('Auth (e2e)', () => {
 
     it('should return 409 if email already exists', async () => {
       // First registration
-      await request(app.getHttpServer())
-        .post('/auth/register')
-        .send({
-          email: 'duplicate@example.com',
-          password: 'password123',
-          name: 'First User',
-          organizationName: 'First Org',
-        });
+      await request(app.getHttpServer()).post('/auth/register').send({
+        email: 'duplicate@example.com',
+        password: 'password123',
+        name: 'First User',
+        organizationName: 'First Org',
+      });
 
       // Duplicate registration
       return request(app.getHttpServer())
@@ -101,14 +99,12 @@ describe('Auth (e2e)', () => {
   describe('/auth/login (POST)', () => {
     beforeEach(async () => {
       // Create a test user
-      await request(app.getHttpServer())
-        .post('/auth/register')
-        .send({
-          email: 'login@example.com',
-          password: 'password123',
-          name: 'Login User',
-          organizationName: 'Login Org',
-        });
+      await request(app.getHttpServer()).post('/auth/register').send({
+        email: 'login@example.com',
+        password: 'password123',
+        name: 'Login User',
+        organizationName: 'Login Org',
+      });
     });
 
     it('should login with valid credentials', () => {
@@ -163,21 +159,17 @@ describe('Auth (e2e)', () => {
 
     beforeEach(async () => {
       // Register and login
-      await request(app.getHttpServer())
-        .post('/auth/register')
-        .send({
-          email: 'profile@example.com',
-          password: 'password123',
-          name: 'Profile User',
-          organizationName: 'Profile Org',
-        });
+      await request(app.getHttpServer()).post('/auth/register').send({
+        email: 'profile@example.com',
+        password: 'password123',
+        name: 'Profile User',
+        organizationName: 'Profile Org',
+      });
 
-      const loginResponse = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send({
-          email: 'profile@example.com',
-          password: 'password123',
-        });
+      const loginResponse = await request(app.getHttpServer()).post('/auth/login').send({
+        email: 'profile@example.com',
+        password: 'password123',
+      });
 
       accessToken = loginResponse.body.access_token;
     });
@@ -195,9 +187,7 @@ describe('Auth (e2e)', () => {
     });
 
     it('should return 401 without token', () => {
-      return request(app.getHttpServer())
-        .get('/auth/profile')
-        .expect(401);
+      return request(app.getHttpServer()).get('/auth/profile').expect(401);
     });
 
     it('should return 401 with invalid token', () => {

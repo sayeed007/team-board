@@ -38,25 +38,21 @@ describe('Boards (e2e)', () => {
     await prisma.organization.deleteMany();
 
     // Create test user and organization
-    const registerResponse = await request(app.getHttpServer())
-      .post('/auth/register')
-      .send({
-        email: 'board@example.com',
-        password: 'password123',
-        name: 'Board User',
-        organizationName: 'Board Org',
-      });
+    const registerResponse = await request(app.getHttpServer()).post('/auth/register').send({
+      email: 'board@example.com',
+      password: 'password123',
+      name: 'Board User',
+      organizationName: 'Board Org',
+    });
 
     userId = registerResponse.body.id;
     organizationId = registerResponse.body.organizationId;
 
     // Login to get token
-    const loginResponse = await request(app.getHttpServer())
-      .post('/auth/login')
-      .send({
-        email: 'board@example.com',
-        password: 'password123',
-      });
+    const loginResponse = await request(app.getHttpServer()).post('/auth/login').send({
+      email: 'board@example.com',
+      password: 'password123',
+    });
 
     accessToken = loginResponse.body.access_token;
 

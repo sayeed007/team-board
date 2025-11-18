@@ -19,7 +19,10 @@ export class TeamsController {
   @Post()
   @Roles(UserRole.ORG_ADMIN, UserRole.TEAM_LEAD)
   @ApiOperation({ summary: 'Create a new team' })
-  create(@Body() createTeamDto: CreateTeamDto, @CurrentUser('organizationId') organizationId: string) {
+  create(
+    @Body() createTeamDto: CreateTeamDto,
+    @CurrentUser('organizationId') organizationId: string,
+  ) {
     return this.teamsService.create(createTeamDto, organizationId);
   }
 
