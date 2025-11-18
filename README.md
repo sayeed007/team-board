@@ -24,6 +24,19 @@
 - 🔔 **Notifications**: Real-time in-app notifications for task assignments and updates
 - 📱 **Responsive Design**: Angular Material UI with modern, intuitive UX
 
+### 🚀 Quick Start
+
+**New to TeamBoard?** Check out the **[Getting Started Guide](GETTING_STARTED.md)** for step-by-step instructions to run the application locally.
+
+**TL;DR** - With Docker:
+```bash
+git clone https://github.com/sayeed007/team-board.git
+cd team-board
+docker-compose up -d
+# Frontend: http://localhost:8080
+# Backend: http://localhost:3000
+```
+
 ---
 
 ## 🏗️ Architecture
@@ -375,6 +388,12 @@ npm run format
 
 ## 📚 Documentation
 
+**Getting Started**:
+- **[Getting Started Guide](GETTING_STARTED.md)** ⭐ - Step-by-step guide to run frontend and backend
+- **[Deployment Guide](DEPLOYMENT.md)** - Production deployment instructions
+- **[Contributing Guide](CONTRIBUTING.md)** - How to contribute to the project
+
+**Technical Documentation**:
 - **[Functional Requirements](docs/TeamBoard%20Functional%20Requirements.md)** - Complete feature specifications
 - **[Architecture Plan](docs/Architecture_Plan.md)** - System design and cloud architecture
 - **[Database Schema](docs/Database_Schema.md)** - PostgreSQL schema and migrations
